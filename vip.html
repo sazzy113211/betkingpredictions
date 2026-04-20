@@ -1,10 +1,10 @@
-<!-- VIP PAGE (vip.html) -->
+<!-- ADMIN PANEL (admin.html) - FIXED CSS LEAK -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BetKing Pro - VIP Access</title>
+    <title>BetKing Pro - Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -14,6 +14,8 @@
             font-family: 'Inter', sans-serif;
             background: #0a0e1a;
             color: white;
+            margin: 0;
+            padding: 0;
         }
         
         .font-cyber {
@@ -21,19 +23,1438 @@
         }
         
         .glass-panel {
-            background: rgba(17, 24, 39, 0.8);
+            background: rgba(17, 24, 39, 0.9);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .vip-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .sidebar {
+            background: rgba(11, 15, 25, 0.95);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
         }
         
-        .gold-gradient {
-            background: linear-gradient(135deg, #f5af19 0%, #f12711 100%);
+        .sidebar-link {
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
         }
         
+        .sidebar-link:hover {
+            background: rgba(0, 255, 136, 0.1);
+            border-left-color: #00ff88;
+            color: #00ff88;
+        }
+        
+        .sidebar-link.active {
+            background: rgba(0, 255, 136, 0.15);
+            border-left-color: #00ff88;
+            color: #00ff88;
+        }
+        
+        .stat-card {
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .neon-border {
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            border: 1px solid #00ff88;
+        }
+        
+        .input-field {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid #374151;
+            transition: all 0.3s;
+        }
+        
+        .input-field:focus {
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+            outline: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            color: #000;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+        
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-purple {
+            background: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .btn-purple:hover {
+            background: rgba(139, 92, 246, 0.3);
+        }
+        
+        .table-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .modal-enter {
+            animation: modalIn 0.3s ease-out;
+        }
+        
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .badge-vip {
+            background: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .badge-free {
+            background: rgba(107, 114, 128, 0.2);
+            color: #9ca3af;
+            border: 1px solid rgba(107, 114, 128, 0.3);
+        }
+        
+        .badge-active {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        
+        .badge-pending {
+            background: rgba(234, 179, 8, 0.2);
+            color: #facc15;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .prediction-select {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid #374151;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .prediction-select:focus {
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+            outline: none;
+        }
+
+        .prediction-select option {
+            background: #1f2937;
+            color: white;
+            padding: 0.5rem;
+        }
+
+        .prediction-group-label {
+            background: #374151;
+            color: #9ca3af;
+            font-weight: 600;
+            padding: 0.5rem;
+        }
+
+        .correct-score-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .score-btn {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid #374151;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        .score-btn:hover {
+            border-color: #a78bfa;
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .score-btn.selected {
+            background: rgba(139, 92, 246, 0.3);
+            border-color: #a78bfa;
+            color: #a78bfa;
+            font-weight: bold;
+        }
+
+        .score-input-custom {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid #374151;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .score-input-custom:focus {
+            border-color: #a78bfa;
+            outline: none;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: translateY(-2px);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0e1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 fixed h-full flex flex-col z-50">
+        <!-- Logo -->
+        <div class="p-6 border-b border-gray-800">
+            <a href="free-games.html" class="flex items-center space-x-3">
+                <i class="fas fa-crown text-2xl text-green-400"></i>
+                <div>
+                    <span class="font-cyber text-lg font-bold tracking-wider">BET<span class="text-green-400">KING</span></span>
+                    <div class="text-xs text-gray-500">Admin Panel</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 py-4 overflow-y-auto">
+            <a href="#" onclick="showTab('dashboard')" id="nav-dashboard" class="sidebar-link active flex items-center gap-3 px-6 py-3 text-gray-300 transition">
+                <i class="fas fa-chart-line w-5 text-center"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" onclick="showTab('games')" id="nav-games" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 transition">
+                <i class="fas fa-futbol w-5 text-center"></i>
+                <span>Manage Games</span>
+            </a>
+            <a href="#" onclick="showTab('users')" id="nav-users" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 transition">
+                <i class="fas fa-users w-5 text-center"></i>
+                <span>Subscribers</span>
+            </a>
+            <a href="#" onclick="showTab('payments')" id="nav-payments" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 transition">
+                <i class="fas fa-money-bill-wave w-5 text-center"></i>
+                <span>Payments</span>
+            </a>
+            <a href="#" onclick="showTab('settings')" id="nav-settings" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 transition">
+                <i class="fas fa-cog w-5 text-center"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <!-- Bottom Actions -->
+        <div class="p-4 border-t border-gray-800 space-y-2">
+            <a href="free-games.html" class="flex items-center gap-3 px-4 py-2 text-gray-400 hover:text-white transition rounded-lg hover:bg-gray-800">
+                <i class="fas fa-home w-5 text-center"></i>
+                <span>Back to Site</span>
+            </a>
+            <a href="vip.html" class="flex items-center gap-3 px-4 py-2 text-gray-400 hover:text-white transition rounded-lg hover:bg-gray-800">
+                <i class="fas fa-crown w-5 text-center"></i>
+                <span>VIP Page</span>
+            </a>
+            <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-2 text-red-400 hover:text-red-300 transition rounded-lg hover:bg-red-500/10">
+                <i class="fas fa-sign-out-alt w-5 text-center"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-64 min-h-screen bg-gray-900/50">
+        
+        <!-- Top Bar -->
+        <header class="glass-panel sticky top-0 z-40 border-b border-gray-800 px-8 py-4 flex justify-between items-center">
+            <h2 id="pageTitle" class="text-xl font-bold font-cyber">Dashboard</h2>
+            <div class="flex items-center gap-4">
+                <div class="text-sm text-gray-400">
+                    <i class="fas fa-user-shield mr-2 text-green-400"></i>
+                    <span id="adminName">Admin</span>
+                </div>
+                <button onclick="logout()" class="logout-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="p-8 max-w-7xl mx-auto">
+
+            <!-- DASHBOARD TAB -->
+            <div id="tab-dashboard" class="tab-content active">
+                
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card glass-panel p-6 rounded-xl border-l-4 border-green-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <div class="text-gray-400 text-sm">Total Users</div>
+                                <div class="text-3xl font-bold mt-1" id="statTotalUsers">0</div>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center">
+                                <i class="fas fa-users text-green-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="text-sm text-green-400">
+                            <i class="fas fa-arrow-up mr-1"></i> <span id="statNewUsers">0</span> new today
+                        </div>
+                    </div>
+
+                    <div class="stat-card glass-panel p-6 rounded-xl border-l-4 border-purple-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <div class="text-gray-400 text-sm">VIP Subscribers</div>
+                                <div class="text-3xl font-bold mt-1" id="statVipUsers">0</div>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center">
+                                <i class="fas fa-crown text-purple-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="text-sm text-purple-400">
+                            <i class="fas fa-gem mr-1"></i> <span id="statVipPercent">0%</span> of total
+                        </div>
+                    </div>
+
+                    <div class="stat-card glass-panel p-6 rounded-xl border-l-4 border-blue-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <div class="text-gray-400 text-sm">Today's Games</div>
+                                <div class="text-3xl font-bold mt-1" id="statTodayGames">0</div>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                                <i class="fas fa-futbol text-blue-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="text-sm text-blue-400">
+                            <span id="statFreeGames">0</span> Free • <span id="statVipGames">0</span> VIP
+                        </div>
+                    </div>
+
+                    <div class="stat-card glass-panel p-6 rounded-xl border-l-4 border-yellow-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <div class="text-gray-400 text-sm">Total Revenue</div>
+                                <div class="text-3xl font-bold mt-1" id="statRevenue">₵0</div>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center">
+                                <i class="fas fa-coins text-yellow-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="text-sm text-yellow-400">
+                            <i class="fas fa-arrow-up mr-1"></i> This month
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="glass-panel rounded-xl p-6 mb-8">
+                    <h3 class="text-lg font-bold mb-4">Quick Actions</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="openAddGameModal()" class="btn-primary px-6 py-3 rounded-xl flex items-center gap-2">
+                            <i class="fas fa-plus"></i> Add New Game
+                        </button>
+                        <button onclick="showTab('users')" class="btn-purple px-6 py-3 rounded-xl flex items-center gap-2">
+                            <i class="fas fa-user-plus"></i> Manage Subscribers
+                        </button>
+                        <button onclick="showTab('games')" class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition">
+                            <i class="fas fa-list"></i> View All Games
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="glass-panel rounded-xl p-6">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <i class="fas fa-clock text-blue-400"></i> Recent Users
+                        </h3>
+                        <div id="recentUsersList" class="space-y-3">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <div class="glass-panel rounded-xl p-6">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <i class="fas fa-fire text-orange-400"></i> Popular Predictions
+                        </h3>
+                        <div id="popularPredictions" class="space-y-3">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MANAGE GAMES TAB -->
+            <div id="tab-games" class="tab-content">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold">Manage Games</h2>
+                        <p class="text-gray-400 text-sm">Add, edit, or remove predictions</p>
+                    </div>
+                    <button onclick="openAddGameModal()" class="btn-primary px-6 py-3 rounded-xl flex items-center gap-2">
+                        <i class="fas fa-plus"></i> Add Game
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div class="flex gap-4 mb-6">
+                    <button onclick="filterGames('all')" id="filter-all" class="px-4 py-2 rounded-lg bg-purple-600 text-white text-sm font-semibold">All</button>
+                    <button onclick="filterGames('free')" id="filter-free" class="px-4 py-2 rounded-lg bg-gray-800 text-gray-400 hover:text-white text-sm font-semibold">Free</button>
+                    <button onclick="filterGames('vip')" id="filter-vip" class="px-4 py-2 rounded-lg bg-gray-800 text-gray-400 hover:text-white text-sm font-semibold">VIP</button>
+                </div>
+
+                <!-- Games Table -->
+                <div class="glass-panel rounded-xl overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-800 text-gray-400 text-sm">
+                            <tr>
+                                <th class="p-4">Match</th>
+                                <th class="p-4">League</th>
+                                <th class="p-4">Prediction</th>
+                                <th class="p-4">Odds</th>
+                                <th class="p-4">Type</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gamesTableBody" class="divide-y divide-gray-800">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SUBSCRIBERS TAB -->
+            <div id="tab-users" class="tab-content">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold">Subscribers</h2>
+                        <p class="text-gray-400 text-sm">Manage user subscriptions and VIP access</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <input type="text" placeholder="Search users..." id="searchUsers" onkeyup="searchUsers()" 
+                            class="input-field px-4 py-2 rounded-lg text-white text-sm w-64">
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="glass-panel rounded-xl overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-800 text-gray-400 text-sm">
+                            <tr>
+                                <th class="p-4">User</th>
+                                <th class="p-4">Email</th>
+                                <th class="p-4">Phone</th>
+                                <th class="p-4">Plan</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4">Expires</th>
+                                <th class="p-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody" class="divide-y divide-gray-800">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PAYMENTS TAB -->
+            <div id="tab-payments" class="tab-content">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold">Payment Records</h2>
+                        <p class="text-gray-400 text-sm">Track subscription payments and verify transactions</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="glass-panel p-6 rounded-xl border-l-4 border-green-500">
+                        <div class="text-gray-400 text-sm">Ghana (GHC)</div>
+                        <div class="text-2xl font-bold text-green-400 mt-1" id="ghcRevenue">₵0</div>
+                    </div>
+                    <div class="glass-panel p-6 rounded-xl border-l-4 border-orange-500">
+                        <div class="text-gray-400 text-sm">Nigeria (₦)</div>
+                        <div class="text-2xl font-bold text-orange-400 mt-1" id="nairaRevenue">₦0</div>
+                    </div>
+                    <div class="glass-panel p-6 rounded-xl border-l-4 border-purple-500">
+                        <div class="text-gray-400 text-sm">Pending Verification</div>
+                        <div class="text-2xl font-bold text-purple-400 mt-1" id="pendingPayments">0</div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-xl overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-800 text-gray-400 text-sm">
+                            <tr>
+                                <th class="p-4">Date</th>
+                                <th class="p-4">User</th>
+                                <th class="p-4">Plan</th>
+                                <th class="p-4">Amount</th>
+                                <th class="p-4">Country</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsTableBody" class="divide-y divide-gray-800">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SETTINGS TAB -->
+            <div id="tab-settings" class="tab-content">
+                <h2 class="text-2xl font-bold mb-6">Admin Settings</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Bank Details -->
+                    <div class="glass-panel rounded-xl p-6">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <i class="fas fa-university text-green-400"></i> Ghana Payment Details
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Account Number</label>
+                                <input type="text" value="0206734296" class="input-field w-full px-4 py-3 rounded-lg text-white" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Bank Name</label>
+                                <input type="text" value="Vodafone" class="input-field w-full px-4 py-3 rounded-lg text-white" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Account Name</label>
+                                <input type="text" value="John Nyanful" class="input-field w-full px-4 py-3 rounded-lg text-white" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-xl p-6">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <i class="fas fa-university text-orange-400"></i> Nigeria Payment Details
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Account Number</label>
+                                <input type="text" value="1030144259" class="input-field w-full px-4 py-3 rounded-lg text-white" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Bank Name</label>
+                                <input type="text" value="GTBank" class="input-field w-full px-4 py-3 rounded-lg text-white" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Account Name</label>
+                                <input type="text" value="Ebuka Kingsley" class="input-field w-full px-4 py-3 rounded-lg text-white" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subscription Codes -->
+                <div class="glass-panel rounded-xl p-6 mt-6">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-key text-yellow-400"></i> Subscription Codes
+                    </h3>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-gray-800/50 rounded-lg p-4 border border-green-500/30">
+                            <div class="text-sm text-gray-400 mb-1">Weekly</div>
+                            <div class="text-lg font-bold text-green-400 font-mono">BETKINGSUBWEEK</div>
+                        </div>
+                        <div class="bg-gray-800/50 rounded-lg p-4 border border-purple-500/30">
+                            <div class="text-sm text-gray-400 mb-1">Monthly</div>
+                            <div class="text-lg font-bold text-purple-400 font-mono">BETKINGSUBMONTH</div>
+                        </div>
+                        <div class="bg-gray-800/50 rounded-lg p-4 border border-yellow-500/30">
+                            <div class="text-sm text-gray-400 mb-1">Yearly</div>
+                            <div class="text-lg font-bold text-yellow-400 font-mono">BETKINGSUBYEAR</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WhatsApp Link -->
+                <div class="glass-panel rounded-xl p-6 mt-6">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                        <i class="fab fa-whatsapp text-green-500"></i> Support WhatsApp
+                    </h3>
+                    <div class="flex items-center gap-4">
+                        <input type="text" value="https://wa.me/2349065287288" class="input-field flex-1 px-4 py-3 rounded-lg text-white" readonly>
+                        <a href="https://wa.me/2349065287288" target="_blank" class="btn-primary px-6 py-3 rounded-lg">
+                            <i class="fab fa-whatsapp mr-2"></i> Open
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ADD GAME MODAL -->
+    <div id="addGameModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="glass-panel rounded-2xl w-full max-w-2xl modal-enter border border-gray-700 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-800 flex justify-between items-center sticky top-0 bg-gray-900/95 backdrop-blur z-10">
+                <h3 class="text-xl font-bold">Add New Prediction</h3>
+                <button onclick="closeAddGameModal()" class="text-gray-400 hover:text-white text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="addGameForm" onsubmit="handleAddGame(event)" class="p-6 space-y-4">
+                
+                <!-- Match Info -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Home Team</label>
+                        <input type="text" id="gameHome" required class="input-field w-full px-4 py-3 rounded-lg text-white" placeholder="e.g. Manchester City">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Away Team</label>
+                        <input type="text" id="gameAway" required class="input-field w-full px-4 py-3 rounded-lg text-white" placeholder="e.g. Arsenal">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">League</label>
+                        <input type="text" id="gameLeague" required class="input-field w-full px-4 py-3 rounded-lg text-white" placeholder="e.g. Premier League">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Match Time</label>
+                        <input type="datetime-local" id="gameTime" required class="input-field w-full px-4 py-3 rounded-lg text-white">
+                    </div>
+                </div>
+
+                <!-- Game Type Selection -->
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Game Type</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="gameType" value="free" checked onchange="togglePredictionType('free')" class="peer sr-only">
+                            <div class="p-4 rounded-xl border-2 border-gray-700 peer-checked:border-green-500 peer-checked:bg-green-500/10 text-center transition">
+                                <i class="fas fa-unlock text-green-400 text-2xl mb-2"></i>
+                                <div class="font-bold">Free Prediction</div>
+                                <div class="text-xs text-gray-500">Standard betting options</div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="gameType" value="vip" onchange="togglePredictionType('vip')" class="peer sr-only">
+                            <div class="p-4 rounded-xl border-2 border-gray-700 peer-checked:border-purple-500 peer-checked:bg-purple-500/10 text-center transition">
+                                <i class="fas fa-crown text-purple-400 text-2xl mb-2"></i>
+                                <div class="font-bold">VIP Prediction</div>
+                                <div class="text-xs text-gray-500">Correct score only</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- FREE PREDICTION OPTIONS -->
+                <div id="freePredictionSection">
+                    <label class="block text-sm text-gray-400 mb-2">Prediction (Free)</label>
+                    <select id="gamePredictionFree" class="prediction-select">
+                        <optgroup label="Match Result">
+                            <option value="Home">Home Win</option>
+                            <option value="Draw">Draw</option>
+                            <option value="Away">Away Win</option>
+                        </optgroup>
+                        <optgroup label="Double Chance">
+                            <option value="Home & G/G">Home & G/G</option>
+                            <option value="Away & G/G">Away & G/G</option>
+                            <option value="G/G">G/G (Both Teams Score)</option>
+                        </optgroup>
+                        <optgroup label="Over 0.5 Goals">
+                            <option value="Over 0.5 Home">Over 0.5 Home</option>
+                            <option value="Over 0.5 Away">Over 0.5 Away</option>
+                            <option value="Over 0.5">Over 0.5 (Match)</option>
+                        </optgroup>
+                        <optgroup label="Over 1.5 Goals">
+                            <option value="Over 1.5 Home">Over 1.5 Home</option>
+                            <option value="Over 1.5 Away">Over 1.5 Away</option>
+                            <option value="Over 1.5">Over 1.5 (Match)</option>
+                        </optgroup>
+                        <optgroup label="Over 2.5 Goals">
+                            <option value="Over 2.5 Home">Over 2.5 Home</option>
+                            <option value="Over 2.5 Away">Over 2.5 Away</option>
+                            <option value="Over 2.5">Over 2.5 (Match)</option>
+                        </optgroup>
+                        <optgroup label="Higher Overs">
+                            <option value="Over 3.5">Over 3.5</option>
+                            <option value="Over 4.5">Over 4.5</option>
+                        </optgroup>
+                        <optgroup label="Under Goals">
+                            <option value="Under 1.5">Under 1.5</option>
+                            <option value="Under 2.5">Under 2.5</option>
+                            <option value="Under 3.5">Under 3.5</option>
+                            <option value="Under 4.5">Under 4.5</option>
+                        </optgroup>
+                        <optgroup label="Specials">
+                            <option value="Corner Over 7.5">Corner Over 7.5</option>
+                            <option value="2.5 & G/G">2.5 & G/G</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- VIP PREDICTION OPTIONS (CORRECT SCORE ONLY) -->
+                <div id="vipPredictionSection" class="hidden">
+                    <label class="block text-sm text-gray-400 mb-2">Correct Score (VIP Only)</label>
+                    <div class="bg-gray-800/50 rounded-xl p-4 border border-purple-500/30">
+                        <div class="text-sm text-purple-400 mb-3 font-semibold">
+                            <i class="fas fa-bullseye mr-2"></i>Select Exact Score
+                        </div>
+                        
+                        <!-- Common Scores Grid -->
+                        <div class="correct-score-grid mb-4">
+                            <button type="button" onclick="selectCorrectScore('1-0')" class="score-btn" data-score="1-0">1-0</button>
+                            <button type="button" onclick="selectCorrectScore('2-0')" class="score-btn" data-score="2-0">2-0</button>
+                            <button type="button" onclick="selectCorrectScore('2-1')" class="score-btn" data-score="2-1">2-1</button>
+                            <button type="button" onclick="selectCorrectScore('0-1')" class="score-btn" data-score="0-1">0-1</button>
+                            <button type="button" onclick="selectCorrectScore('0-2')" class="score-btn" data-score="0-2">0-2</button>
+                            <button type="button" onclick="selectCorrectScore('1-2')" class="score-btn" data-score="1-2">1-2</button>
+                            <button type="button" onclick="selectCorrectScore('1-1')" class="score-btn" data-score="1-1">1-1</button>
+                            <button type="button" onclick="selectCorrectScore('2-2')" class="score-btn" data-score="2-2">2-2</button>
+                            <button type="button" onclick="selectCorrectScore('0-0')" class="score-btn" data-score="0-0">0-0</button>
+                            <button type="button" onclick="selectCorrectScore('3-1')" class="score-btn" data-score="3-1">3-1</button>
+                            <button type="button" onclick="selectCorrectScore('3-0')" class="score-btn" data-score="3-0">3-0</button>
+                            <button type="button" onclick="selectCorrectScore('1-3')" class="score-btn" data-score="1-3">1-3</button>
+                        </div>
+
+                        <!-- Custom Score Input -->
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-400 text-sm">Custom:</span>
+                            <input type="number" id="customHomeScore" min="0" max="9" placeholder="H" 
+                                class="score-input-custom w-16" onchange="updateCustomScore()">
+                            <span class="text-gray-500 font-bold">-</span>
+                            <input type="number" id="customAwayScore" min="0" max="9" placeholder="A" 
+                                class="score-input-custom w-16" onchange="updateCustomScore()">
+                        </div>
+                        
+                        <input type="hidden" id="gamePredictionVip" value="">
+                        <div id="selectedScoreDisplay" class="mt-3 text-center text-lg font-bold text-purple-400 hidden">
+                            Selected: <span id="displayScore"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Odds</label>
+                        <input type="number" step="0.01" id="gameOdds" required class="input-field w-full px-4 py-3 rounded-lg text-white" placeholder="e.g. 1.85">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Confidence: <span id="confidenceValue" class="text-green-400">85%</span></label>
+                        <input type="range" id="gameConfidence" min="50" max="100" value="85" 
+                            class="w-full accent-green-500 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                            oninput="document.getElementById('confidenceValue').textContent = this.value + '%'">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary w-full py-4 rounded-xl text-lg mt-4">
+                    <i class="fas fa-plus mr-2"></i> Publish Prediction
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT GAME MODAL -->
+    <div id="editGameModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="glass-panel rounded-2xl w-full max-w-lg modal-enter border border-gray-700">
+            <div class="p-6 border-b border-gray-800 flex justify-between items-center">
+                <h3 class="text-xl font-bold">Edit Prediction</h3>
+                <button onclick="closeEditGameModal()" class="text-gray-400 hover:text-white text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editGameForm" onsubmit="handleEditGame(event)" class="p-6 space-y-4">
+                <input type="hidden" id="editGameId">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Home Team</label>
+                        <input type="text" id="editGameHome" required class="input-field w-full px-4 py-3 rounded-lg text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Away Team</label>
+                        <input type="text" id="editGameAway" required class="input-field w-full px-4 py-3 rounded-lg text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Prediction</label>
+                    <input type="text" id="editGamePrediction" required class="input-field w-full px-4 py-3 rounded-lg text-white" readonly>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Odds</label>
+                        <input type="number" step="0.01" id="editGameOdds" required class="input-field w-full px-4 py-3 rounded-lg text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Status</label>
+                        <select id="editGameStatus" class="input-field w-full px-4 py-3 rounded-lg text-white">
+                            <option value="pending">Pending</option>
+                            <option value="won">Won</option>
+                            <option value="lost">Lost</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary w-full py-3 rounded-xl">
+                    Update Prediction
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed top-4 right-4 z-50 transform translate-x-full transition-all duration-300">
+        <div class="bg-gray-800 border border-green-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3">
+            <i class="fas fa-check-circle text-green-400 text-xl"></i>
+            <span id="toastMessage">Operation successful</span>
+        </div>
+    </div>
+
+    <script>
+        // Check admin auth
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser || currentUser.role !== 'admin') {
+            window.location.href = 'index.html';
+        }
+
+        // Data
+        let games = JSON.parse(localStorage.getItem('games')) || [
+            {
+                id: 1,
+                home: "Manchester City",
+                away: "Arsenal",
+                league: "Premier League",
+                time: "2026-04-20T20:00",
+                prediction: "Home",
+                odds: 1.85,
+                confidence: 92,
+                type: "free",
+                category: "single",
+                status: "pending"
+            },
+            {
+                id: 2,
+                home: "Real Madrid",
+                away: "Barcelona",
+                league: "La Liga",
+                time: "2026-04-21T21:00",
+                prediction: "Over 2.5",
+                odds: 1.95,
+                confidence: 88,
+                type: "free",
+                category: "single",
+                status: "pending"
+            },
+            {
+                id: 3,
+                home: "Bayern Munich",
+                away: "Dortmund",
+                league: "Bundesliga",
+                time: "2026-04-22T18:30",
+                prediction: "2-1",
+                odds: 8.50,
+                confidence: 75,
+                type: "vip",
+                category: "correct-score",
+                status: "pending"
+            }
+        ];
+
+        let users = JSON.parse(localStorage.getItem('users')) || [
+            { id: 1, username: "admin", email: "admin@betking.com", phone: "+233000000000", password: "admin123", role: "admin", vip: false, vipExpiry: null, createdAt: "2026-04-01" },
+            { id: 2, username: "testuser", email: "user@example.com", phone: "+2349065287288", password: "user123", role: "user", vip: true, vipExpiry: "2026-12-31", createdAt: "2026-04-15" },
+            { id: 3, username: "newuser", email: "new@example.com", phone: "+233551234567", password: "pass123", role: "user", vip: false, vipExpiry: null, createdAt: "2026-04-20" }
+        ];
+
+        let payments = JSON.parse(localStorage.getItem('payments')) || [
+            { id: 1, userId: 2, userName: "testuser", plan: "monthly", amountGhc: 800, amountNaira: 150000, country: "ghana", status: "completed", date: "2026-04-15" },
+            { id: 2, userId: 3, userName: "newuser", plan: "weekly", amountGhc: 300, amountNaira: 30000, country: "nigeria", status: "pending", date: "2026-04-20" }
+        ];
+
+        let currentFilter = 'all';
+        let selectedCorrectScore = '';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('adminName').textContent = currentUser.username;
+            updateStats();
+            renderGames();
+            renderUsers();
+            renderPayments();
+            renderRecentUsers();
+            renderPopularPredictions();
+        });
+
+        // Toggle Prediction Type
+        function togglePredictionType(type) {
+            const freeSection = document.getElementById('freePredictionSection');
+            const vipSection = document.getElementById('vipPredictionSection');
+            
+            if (type === 'vip') {
+                freeSection.classList.add('hidden');
+                vipSection.classList.remove('hidden');
+                document.getElementById('gamePredictionFree').removeAttribute('required');
+            } else {
+                freeSection.classList.remove('hidden');
+                vipSection.classList.add('hidden');
+                document.getElementById('gamePredictionFree').setAttribute('required', '');
+                selectedCorrectScore = '';
+                document.querySelectorAll('.score-btn').forEach(btn => btn.classList.remove('selected'));
+                document.getElementById('selectedScoreDisplay').classList.add('hidden');
+            }
+        }
+
+        // Select Correct Score
+        function selectCorrectScore(score) {
+            selectedCorrectScore = score;
+            document.getElementById('gamePredictionVip').value = score;
+            
+            document.querySelectorAll('.score-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.dataset.score === score) {
+                    btn.classList.add('selected');
+                }
+            });
+            
+            document.getElementById('customHomeScore').value = '';
+            document.getElementById('customAwayScore').value = '';
+            
+            document.getElementById('displayScore').textContent = score;
+            document.getElementById('selectedScoreDisplay').classList.remove('hidden');
+        }
+
+        // Update Custom Score
+        function updateCustomScore() {
+            const home = document.getElementById('customHomeScore').value;
+            const away = document.getElementById('customAwayScore').value;
+            
+            if (home !== '' && away !== '') {
+                selectedCorrectScore = home + '-' + away;
+                document.getElementById('gamePredictionVip').value = selectedCorrectScore;
+                
+                document.querySelectorAll('.score-btn').forEach(btn => btn.classList.remove('selected'));
+                
+                document.getElementById('displayScore').textContent = selectedCorrectScore;
+                document.getElementById('selectedScoreDisplay').classList.remove('hidden');
+            }
+        }
+
+        // Tab Navigation
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('nav-' + tab).classList.add('active');
+            
+            const titles = {
+                dashboard: 'Dashboard',
+                games: 'Manage Games',
+                users: 'Subscribers',
+                payments: 'Payment Records',
+                settings: 'Settings'
+            };
+            document.getElementById('pageTitle').textContent = titles[tab];
+            
+            if (tab === 'games') renderGames();
+            if (tab === 'users') renderUsers();
+            if (tab === 'payments') renderPayments();
+        }
+
+        // Stats
+        function updateStats() {
+            const regularUsers = users.filter(u => u.role === 'user');
+            const vipUsers = regularUsers.filter(u => u.vip);
+            
+            document.getElementById('statTotalUsers').textContent = regularUsers.length;
+            document.getElementById('statVipUsers').textContent = vipUsers.length;
+            document.getElementById('statVipPercent').textContent = regularUsers.length ? Math.round((vipUsers.length / regularUsers.length) * 100) + '%' : '0%';
+            document.getElementById('statNewUsers').textContent = regularUsers.filter(u => {
+                const created = new Date(u.createdAt);
+                const today = new Date();
+                return created.toDateString() === today.toDateString();
+            }).length;
+            
+            document.getElementById('statTodayGames').textContent = games.length;
+            document.getElementById('statFreeGames').textContent = games.filter(g => g.type === 'free').length;
+            document.getElementById('statVipGames').textContent = games.filter(g => g.type === 'vip').length;
+            
+            const totalGhc = payments.filter(p => p.status === 'completed').reduce((sum, p) => sum + (p.amountGhc || 0), 0);
+            const totalNaira = payments.filter(p => p.status === 'completed').reduce((sum, p) => sum + (p.amountNaira || 0), 0);
+            document.getElementById('statRevenue').textContent = '₵' + totalGhc.toLocaleString();
+            
+            document.getElementById('ghcRevenue').textContent = '₵' + totalGhc.toLocaleString();
+            document.getElementById('nairaRevenue').textContent = '₦' + totalNaira.toLocaleString();
+            document.getElementById('pendingPayments').textContent = payments.filter(p => p.status === 'pending').length;
+        }
+
+        // Games Management
+        function renderGames() {
+            const tbody = document.getElementById('gamesTableBody');
+            const filteredGames = currentFilter === 'all' ? games : games.filter(g => g.type === currentFilter);
+            
+            tbody.innerHTML = filteredGames.map(game => {
+                const matchDate = new Date(game.time);
+                const dateStr = matchDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                
+                const isCorrectScore = game.type === 'vip';
+                
+                return `
+                    <tr class="table-row transition">
+                        <td class="p-4">
+                            <div class="font-semibold">${game.home} vs ${game.away}</div>
+                            <div class="text-sm text-gray-500">${dateStr}</div>
+                        </td>
+                        <td class="p-4 text-sm text-gray-400">${game.league}</td>
+                        <td class="p-4">
+                            <span class="font-bold ${isCorrectScore ? 'text-purple-400' : 'text-green-400'}">
+                                ${isCorrectScore ? '<i class="fas fa-bullseye mr-1"></i>' : ''}${game.prediction}
+                            </span>
+                        </td>
+                        <td class="p-4 font-bold">${game.odds}</td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 rounded text-xs font-semibold ${game.type === 'vip' ? 'badge-vip' : 'badge-free'}">
+                                ${game.type.toUpperCase()}
+                            </span>
+                        </td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 rounded text-xs font-semibold ${game.status === 'won' ? 'badge-active' : game.status === 'lost' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'badge-pending'} capitalize">
+                                ${game.status}
+                            </span>
+                        </td>
+                        <td class="p-4 text-right">
+                            <button onclick="openEditGameModal(${game.id})" class="text-blue-400 hover:text-blue-300 mr-3 transition">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteGame(${game.id})" class="text-red-400 hover:text-red-300 transition">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterGames(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('[id^="filter-"]').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white');
+                btn.classList.add('bg-gray-800', 'text-gray-400');
+            });
+            document.getElementById('filter-' + filter).classList.remove('bg-gray-800', 'text-gray-400');
+            document.getElementById('filter-' + filter).classList.add('bg-purple-600', 'text-white');
+            renderGames();
+        }
+
+        function openAddGameModal() {
+            document.getElementById('addGameModal').classList.remove('hidden');
+            document.getElementById('addGameModal').classList.add('flex');
+            togglePredictionType('free');
+        }
+
+        function closeAddGameModal() {
+            document.getElementById('addGameModal').classList.add('hidden');
+            document.getElementById('addGameModal').classList.remove('flex');
+            document.getElementById('addGameForm').reset();
+            selectedCorrectScore = '';
+            document.querySelectorAll('.score-btn').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById('selectedScoreDisplay').classList.add('hidden');
+        }
+
+        function handleAddGame(e) {
+            e.preventDefault();
+            
+            const gameType = document.querySelector('input[name="gameType"]:checked').value;
+            let prediction;
+            
+            if (gameType === 'vip') {
+                prediction = selectedCorrectScore || document.getElementById('gamePredictionVip').value;
+                if (!prediction) {
+                    showToast('Please select a correct score!', 'error');
+                    return;
+                }
+            } else {
+                prediction = document.getElementById('gamePredictionFree').value;
+            }
+            
+            const newGame = {
+                id: games.length + 1,
+                home: document.getElementById('gameHome').value,
+                away: document.getElementById('gameAway').value,
+                league: document.getElementById('gameLeague').value,
+                time: document.getElementById('gameTime').value,
+                prediction: prediction,
+                odds: parseFloat(document.getElementById('gameOdds').value),
+                confidence: parseInt(document.getElementById('gameConfidence').value),
+                type: gameType,
+                category: gameType === 'vip' ? 'correct-score' : 'single',
+                status: 'pending'
+            };
+            
+            games.push(newGame);
+            saveGames();
+            closeAddGameModal();
+            renderGames();
+            updateStats();
+            showToast('Game added successfully!');
+        }
+
+        function openEditGameModal(id) {
+            const game = games.find(g => g.id === id);
+            if (!game) return;
+            
+            document.getElementById('editGameId').value = id;
+            document.getElementById('editGameHome').value = game.home;
+            document.getElementById('editGameAway').value = game.away;
+            document.getElementById('editGamePrediction').value = game.prediction;
+            document.getElementById('editGameOdds').value = game.odds;
+            document.getElementById('editGameStatus').value = game.status;
+            
+            document.getElementById('editGameModal').classList.remove('hidden');
+            document.getElementById('editGameModal').classList.add('flex');
+        }
+
+        function closeEditGameModal() {
+            document.getElementById('editGameModal').classList.add('hidden');
+            document.getElementById('editGameModal').classList.remove('flex');
+        }
+
+        function handleEditGame(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editGameId').value);
+            const game = games.find(g => g.id === id);
+            
+            if (game) {
+                game.home = document.getElementById('editGameHome').value;
+                game.away = document.getElementById('editGameAway').value;
+                game.odds = parseFloat(document.getElementById('editGameOdds').value);
+                game.status = document.getElementById('editGameStatus').value;
+                
+                saveGames();
+                closeEditGameModal();
+                renderGames();
+                showToast('Game updated successfully!');
+            }
+        }
+
+        function deleteGame(id) {
+            if (confirm('Are you sure you want to delete this game?')) {
+                games = games.filter(g => g.id !== id);
+                saveGames();
+                renderGames();
+                updateStats();
+                showToast('Game deleted');
+            }
+        }
+
+        // Users Management
+        function renderUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            const regularUsers = users.filter(u => u.role === 'user');
+            
+            tbody.innerHTML = regularUsers.map(user => {
+                const isVip = user.vip;
+                const expiryDate = user.vipExpiry ? new Date(user.vipExpiry).toLocaleDateString() : 'N/A';
+                
+                return `
+                    <tr class="table-row transition">
+                        <td class="p-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
+                                    <i class="fas fa-user text-gray-400"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">${user.username}</div>
+                                    <div class="text-xs text-gray-500">ID: #${user.id}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-4 text-sm text-gray-400">${user.email}</td>
+                        <td class="p-4 text-sm text-gray-400">${user.phone || 'N/A'}</td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 rounded text-xs font-semibold ${isVip ? 'badge-vip' : 'badge-free'}">
+                                ${isVip ? 'VIP' : 'FREE'}
+                            </span>
+                        </td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 rounded text-xs font-semibold ${isVip ? 'badge-active' : 'badge-pending'}">
+                                ${isVip ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td class="p-4 text-sm text-gray-400">${expiryDate}</td>
+                        <td class="p-4 text-right">
+                            <button onclick="toggleVip(${user.id})" class="btn-purple px-3 py-1 rounded text-xs mr-2">
+                                <i class="fas fa-crown mr-1"></i> ${isVip ? 'Revoke' : 'Grant VIP'}
+                            </button>
+                            <button onclick="deleteUser(${user.id})" class="btn-danger px-3 py-1 rounded text-xs">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function searchUsers() {
+            const query = document.getElementById('searchUsers').value.toLowerCase();
+            const rows = document.querySelectorAll('#usersTableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        function toggleVip(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            
+            user.vip = !user.vip;
+            if (user.vip) {
+                const expiry = new Date();
+                expiry.setDate(expiry.getDate() + 30);
+                user.vipExpiry = expiry.toISOString();
+            } else {
+                user.vipExpiry = null;
+            }
+            
+            saveUsers();
+            renderUsers();
+            updateStats();
+            showToast(`VIP ${user.vip ? 'granted' : 'revoked'} for ${user.username}`);
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                users = users.filter(u => u.id !== userId);
+                saveUsers();
+                renderUsers();
+                updateStats();
+                showToast('User deleted');
+            }
+        }
+
+        // Payments
+        function renderPayments() {
+            const tbody = document.getElementById('paymentsTableBody');
+            
+            tbody.innerHTML = payments.map(payment => {
+                const planColors = {
+                    weekly: 'bg-orange-500/20 text-orange-400',
+                    monthly: 'bg-purple-500/20 text-purple-400',
+                    yearly: 'bg-yellow-500/20 text-yellow-400'
+                };
+                
+                return `
+                    <tr class="table-row transition">
+                        <td class="p-4 text-sm text-gray-400">${payment.date}</td>
+                        <td class="p-4 font-semibold">${payment.userName}</td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 rounded text-xs font-semibold ${planColors[payment.plan] || 'bg-gray-700'} capitalize">
+                                ${payment.plan}
+                            </span>
+                        </td>
+                        <td class="p-4 font-bold">
+                            ${payment.country === 'ghana' ? '₵' + payment.amountGhc : '₦' + payment.amountNaira}
+                        </td>
+                        <td class="p-4 text-sm text-gray-400">
+                            ${payment.country === 'ghana' ? '🇬🇭 Ghana' : '🇳🇬 Nigeria'}
+                        </td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 rounded text-xs font-semibold ${payment.status === 'completed' ? 'badge-active' : 'badge-pending'} capitalize">
+                                ${payment.status}
+                            </span>
+                        </td>
+                        <td class="p-4 text-right">
+                            ${payment.status === 'pending' ? `
+                                <button onclick="verifyPayment(${payment.id})" class="btn-primary px-3 py-1 rounded text-xs mr-2">
+                                    <i class="fas fa-check mr-1"></i> Verify
+                                </button>
+                            ` : ''}
+                            <button onclick="deletePayment(${payment.id})" class="btn-danger px-3 py-1 rounded text-xs">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function verifyPayment(paymentId) {
+            const payment = payments.find(p => p.id === paymentId);
+            if (payment) {
+                payment.status = 'completed';
+                
+                const user = users.find(u => u.id === payment.userId);
+                if (user) {
+                    user.vip = true;
+                    const days = { weekly: 7, monthly: 30, yearly: 365 };
+                    const expiry = new Date();
+                    expiry.setDate(expiry.getDate() + (days[payment.plan] || 30));
+                    user.vipExpiry = expiry.toISOString();
+                }
+                
+                savePayments();
+                saveUsers();
+                renderPayments();
+                renderUsers();
+                updateStats();
+                showToast('Payment verified and VIP activated!');
+            }
+        }
+
+        function deletePayment(paymentId) {
+            if (confirm('Delete this payment record?')) {
+                payments = payments.filter(p => p.id !== paymentId);
+                savePayments();
+                renderPayments();
+                showToast('Payment deleted');
+            }
+        }
+
+        // Recent Users & Popular Predictions
+        function renderRecentUsers() {
+            const container = document.getElementById('recentUsersList');
+            const recent = users.filter(u => u.role === 'user').slice(-5).reverse();
+            
+            container.innerHTML = recent.map(user => `
+                <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
+                            <i class="fas fa-user text-xs text-gray-400"></i>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-sm">${user.username}</div>
+                            <div class="text-xs text-gray-500">${user.createdAt}</div>
+                        </div>
+                    </div>
+                    <span class="px-2 py-1 rounded text-xs ${user.vip ? 'badge-vip' : 'badge-free'}">
+                        ${user.vip ? 'VIP' : 'FREE'}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        function renderPopularPredictions() {
+            const container = document.getElementById('popularPredictions');
+            const predictions = {};
+            
+            games.forEach(g => {
+                predictions[g.prediction] = (predictions[g.prediction] || 0) + 1;
+            });
+            
+            const sorted = Object.entries(predictions).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            
+            container.innerHTML = sorted.map(([pred, count]) => `
+                <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
+                            <i class="fas fa-futbol text-xs text-green-400"></i>
+                        </div>
+                        <span class="font-semibold text-sm">${pred}</span>
+                    </div>
+                    <span class="text-sm text-gray-400">${count} games</span>
+                </div>
+            `).join('');
+        }
+
+        // Save Functions
+        function saveGames() {
+            localStorage.setItem('games', JSON.stringify(games));
+        }
+
+        function saveUsers() {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        function savePayments() {
+            localStorage.setItem('payments', JSON.stringify(payments));
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        // Toast
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = toast.querySelector('i');
+            const msgEl = document.getElementById('toastMessage');
+            
+            msgEl.textContent = message;
+            if (type === 'error') {
+                icon.className = 'fas fa-exclamation-circle text-red-400 text-xl';
+                toast.querySelector('div').className = 'bg-gray-800 border border-red-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3';
+            } else {
+                icon.className = 'fas fa-check-circle text-green-400 text-xl';
+                toast.querySelector('div').className = 'bg-gray-800 border border-green-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3';
+            }
+            
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        // Close modals on outside click
+        window.onclick = function(event) {
+            if (event.target.id === 'addGameModal') closeAddGameModal();
+            if (event.target.id === 'editGameModal') closeEditGameModal();
+        }
+    </script>
+</body>
+</html>
         .silver-gradient {
             background: linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%);
         }
